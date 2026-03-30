@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OnlyConecta — Cadastro</title>
@@ -430,7 +432,7 @@
 
 <!-- NAV -->
 <nav>
-  <a href="index.html" class="logo">
+  <a href="onlyconecta.html" class="logo">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="32" height="32">
       <defs>
         <linearGradient id="navGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -447,7 +449,7 @@
     </svg>
     <div class="logo-text"><span>Only</span><span>Conecta</span></div>
   </a>
-  <a href="index.html" class="back-link">← Voltar ao site</a>
+  <a href="onlyconecta.html" class="back-link">← Voltar ao site</a>
 </nav>
 
 <!-- MAIN -->
@@ -816,11 +818,35 @@
     if (val.length >= 12 && /[A-Z]/.test(val) && /[0-9]/.test(val)) bars[2].classList.add('strong');
   }
 
-  function goToDashboard() {
-    const name = document.getElementById('nameInput').value || (userType === 'agency' ? 'Minha Agência' : 'Minha Conta');
-    const email = document.getElementById('emailInput').value || '';
-    const params = new URLSearchParams({ type: userType, name, email });
-    window.location.href = 'onlyconecta-dashboard.html?' + params.toString();
+  async function goToDashboard() {
+    const name     = document.getElementById('nameInput').value.trim();
+    const email    = document.getElementById('emailInput').value.trim();
+    const password = document.getElementById('passInput').value;
+
+    if (!name || !email || !password) {
+      alert('Preencha nome, e-mail e senha para continuar.');
+      return;
+    }
+    if (password.length < 6) {
+      alert('A senha deve ter no mínimo 6 caracteres.');
+      return;
+    }
+
+    const btn = document.querySelector('#step5 .btn-primary');
+    if (btn) { btn.textContent = '⏳ Criando conta...'; btn.disabled = true; }
+
+    try {
+      const data = await oc.signUp(name, email, password, userType);
+      if (data.user) {
+        const params = new URLSearchParams({ type: userType, name });
+        window.location.href = 'onlyconecta-dashboard.html?' + params.toString();
+      } else {
+        alert('✅ Conta criada! Verifique seu e-mail para ativar o acesso.');
+      }
+    } catch (err) {
+      alert('Erro ao criar conta: ' + err.message);
+      if (btn) { btn.textContent = 'Ir para o Dashboard →'; btn.disabled = false; }
+    }
   }
 
   function selectModality(el, value) {

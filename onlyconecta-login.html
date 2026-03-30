@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OnlyConecta — Login</title>
@@ -101,7 +103,7 @@
 <body>
 
 <nav>
-  <a href="index.html" class="logo">
+  <a href="onlyconecta.html" class="logo">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="30" height="30">
       <defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00AFF0"/><stop offset="100%" style="stop-color:#FF6C2F"/></linearGradient></defs>
       <circle cx="100" cy="90" r="72" fill="#0F1520"/>
@@ -191,18 +193,32 @@
     input.type = input.type === 'password' ? 'text' : 'password';
   }
 
-  function socialLogin(provider) {
-    // Will connect to Supabase OAuth
-    alert(`Login com ${provider === 'google' ? 'Google' : 'Apple'} será ativado após configurar o Supabase.\n\nConsulte o guia de backend.`);
+  async function socialLogin(provider) {
+    try {
+      await oc.socialLogin(provider);
+    } catch (err) {
+      alert('Erro no login com ' + provider + ': ' + err.message);
+    }
   }
 
-  function doLogin() {
-    const email = document.getElementById('loginEmail').value;
-    const pass = document.getElementById('loginPass').value;
+  async function doLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass  = document.getElementById('loginPass').value;
     if (!email || !pass) { alert('Preencha e-mail e senha.'); return; }
-    // Simulate login — replace with Supabase auth
-    const params = new URLSearchParams({ type: 'model', name: email.split('@')[0] });
-    window.location.href = 'onlyconecta-dashboard.html?' + params.toString();
+
+    const btn = document.querySelector('.btn-primary');
+    btn.textContent = '⏳ Entrando...';
+    btn.disabled = true;
+
+    try {
+      const profile = await oc.signIn(email, pass);
+      const params  = new URLSearchParams({ type: profile.type, name: profile.name });
+      window.location.href = 'onlyconecta-dashboard.html?' + params.toString();
+    } catch (err) {
+      alert('E-mail ou senha incorretos.');
+      btn.textContent = 'Entrar →';
+      btn.disabled = false;
+    }
   }
 </script>
 </body>

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OnlyConecta — Dashboard</title>
@@ -772,7 +774,7 @@
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <a href="index.html" class="sidebar-logo">
+  <a href="onlyconecta.html" class="sidebar-logo">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="30" height="30">
       <defs>
         <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1409,21 +1411,59 @@
   }
 
   // ─── INIT ─────────────────────────────────────────────────────────────
-  (function init() {
+  (async function init() {
     const params = new URLSearchParams(window.location.search);
-    const type = params.get('type') || 'model';
-    const name = params.get('name');
-    const email = params.get('email');
+    let   type   = params.get('type') || 'model';
+    let   name   = params.get('name');
 
-    if (name) {
-      data[type].name = name;
-      // Update email in profile
-      const emailInput = document.querySelector('.form-input[type="email"]');
-      if (emailInput && email) emailInput.value = email;
+    // Try to get real session from Supabase
+    try {
+      if (window.oc) {
+        const { data: { session } } = await oc.client.auth.getSession();
+        if (session) {
+          const { data: profile } = await oc.client
+            .from('profiles').select('*').eq('id', session.user.id).single();
+          if (profile) {
+            type = profile.type;
+            name = profile.name;
+            data[type].name = name;
+
+            // Load real notifications
+            const notifs = await oc.getNotifications();
+            if (notifs?.length) {
+              data[type].notifications = notifs.map(n => ({
+                icon: n.icon || '🔔',
+                bg:   'rgba(0,175,240,0.15)',
+                title: n.title,
+                desc:  n.description,
+                time:  new Date(n.created_at).toLocaleDateString('pt-BR'),
+                read:  n.read
+              }));
+            }
+
+            // Subscribe to realtime notifications
+            oc.subscribeNotifications(notif => {
+              showToast(notif.title);
+              document.querySelector('.notif-dot').style.display = 'block';
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.log('Usando dados de demonstração:', e.message);
     }
 
+    if (name) data[type].name = name;
     setView(type);
   })();
+
+  function showToast(msg) {
+    const t = document.createElement('div');
+    t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#0F1520;border:1px solid rgba(255,255,255,.1);border-left:3px solid #44CC88;border-radius:12px;padding:14px 20px;font-size:14px;z-index:999;color:#F4F8FF;';
+    t.textContent = '🔔 ' + msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 4000);
+  }
 </script>
 </body>
 </html>
