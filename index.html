@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OnlyConecta — Conectando Modelos e Agências</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #00AFF0;
+    --orange: #FF6C2F;
+    --dark: #080C12;
+    --dark2: #0F1520;
+    --dark3: #162030;
+    --white: #F4F8FF;
+    --gray: #8899AA;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(8,12,18,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+
+  .logo-text span:first-child { color: var(--blue); }
+  .logo-text span:last-child { color: var(--orange); }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--gray);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--white); }
+
+  .nav-cta {
+    background: var(--orange);
+    color: #fff !important;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 500 !important;
+    transition: opacity 0.2s !important;
+  }
+
+  .nav-cta:hover { opacity: 0.85; color: #fff !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 40px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-glow-blue {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,175,240,0.15) 0%, transparent 70%);
+    top: -100px; left: -100px;
+    animation: pulse 6s ease-in-out infinite;
+  }
+
+  .hero-glow-orange {
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(255,108,47,0.12) 0%, transparent 70%);
+    bottom: -50px; right: -50px;
+    animation: pulse 6s ease-in-out infinite reverse;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.7; }
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,175,240,0.1);
+    border: 1px solid rgba(0,175,240,0.3);
+    color: var(--blue);
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  .hero-badge::before {
+    content: '⚡';
+    font-size: 12px;
+  }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -2px;
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s ease 0.1s both;
+  }
+
+  .hero-title .blue { color: var(--blue); }
+  .hero-title .orange { color: var(--orange); }
+
+  .hero-sub {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--gray);
+    max-width: 580px;
+    margin: 0 auto 48px;
+    line-height: 1.6;
+    font-weight: 300;
+    animation: fadeUp 0.6s ease 0.2s both;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s ease 0.3s both;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--orange), #FF4500);
+    color: #fff;
+    padding: 16px 36px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 8px 32px rgba(255,108,47,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(255,108,47,0.4);
+  }
+
+  .btn-secondary {
+    background: rgba(0,175,240,0.1);
+    color: var(--blue);
+    padding: 16px 36px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid rgba(0,175,240,0.3);
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+  }
+
+  .btn-secondary:hover {
+    transform: translateY(-2px);
+    background: rgba(0,175,240,0.2);
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 60px;
+    justify-content: center;
+    margin-top: 80px;
+    padding-top: 60px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    animation: fadeUp 0.6s ease 0.4s both;
+    flex-wrap: wrap;
+  }
+
+  .stat-item { text-align: center; }
+
+  .stat-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--blue), var(--orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: var(--gray);
+    margin-top: 4px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTIONS */
+  section {
+    padding: 100px 60px;
+    position: relative;
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  .section-sub {
+    color: var(--gray);
+    font-size: 18px;
+    font-weight: 300;
+    max-width: 500px;
+    line-height: 1.6;
+  }
+
+  /* HOW IT WORKS */
+  .how {
+    background: var(--dark2);
+  }
+
+  .how-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .how-header {
+    text-align: center;
+    margin-bottom: 70px;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    position: relative;
+  }
+
+  .steps::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: calc(16.66% + 16px);
+    right: calc(16.66% + 16px);
+    height: 1px;
+    background: linear-gradient(90deg, var(--blue), var(--orange));
+    opacity: 0.3;
+  }
+
+  .step {
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 36px 28px;
+    text-align: center;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .step:hover {
+    transform: translateY(-6px);
+    border-color: rgba(0,175,240,0.3);
+  }
+
+  .step-number {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--orange));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0 auto 24px;
+  }
+
+  .step h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .step p {
+    color: var(--gray);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* FOR MODELS & AGENCIES */
+  .for-section {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .for-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 60px;
+  }
+
+  .for-card {
+    border-radius: 20px;
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .for-card.models {
+    background: linear-gradient(135deg, rgba(0,175,240,0.1), rgba(0,175,240,0.03));
+    border: 1px solid rgba(0,175,240,0.2);
+  }
+
+  .for-card.agencies {
+    background: linear-gradient(135deg, rgba(255,108,47,0.1), rgba(255,108,47,0.03));
+    border: 1px solid rgba(255,108,47,0.2);
+  }
+
+  .for-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    opacity: 0.08;
+  }
+
+  .for-card.models::before { background: var(--blue); }
+  .for-card.agencies::before { background: var(--orange); }
+
+  .for-icon {
+    font-size: 40px;
+    margin-bottom: 24px;
+  }
+
+  .for-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 20px;
+  }
+
+  .for-card.models h3 { color: var(--blue); }
+  .for-card.agencies h3 { color: var(--orange); }
+
+  .for-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .for-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--white);
+    font-weight: 300;
+  }
+
+  .for-list li::before {
+    content: '✓';
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .for-card.models .for-list li::before {
+    background: rgba(0,175,240,0.2);
+    color: var(--blue);
+  }
+
+  .for-card.agencies .for-list li::before {
+    background: rgba(255,108,47,0.2);
+    color: var(--orange);
+  }
+
+  /* PRICING */
+  .pricing {
+    background: var(--dark2);
+  }
+
+  .pricing-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .pricing-header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .pricing-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 24px;
+    font-size: 14px;
+    color: var(--gray);
+  }
+
+  .toggle {
+    width: 48px; height: 26px;
+    background: var(--orange);
+    border-radius: 100px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 20px; height: 20px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+  }
+
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .plan {
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 36px 28px;
+    position: relative;
+    transition: transform 0.3s;
+  }
+
+  .plan:hover { transform: translateY(-4px); }
+
+  .plan.featured {
+    border-color: var(--orange);
+    background: linear-gradient(180deg, rgba(255,108,47,0.08), var(--dark3));
+  }
+
+  .plan-badge {
+    position: absolute;
+    top: -12px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--orange);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 16px;
+    border-radius: 100px;
+  }
+
+  .plan-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .plan-price {
+    font-family: 'Syne', sans-serif;
+    font-size: 44px;
+    font-weight: 800;
+    margin: 20px 0 4px;
+    line-height: 1;
+  }
+
+  .plan-price span {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--gray);
+  }
+
+  .plan-period {
+    color: var(--gray);
+    font-size: 13px;
+    margin-bottom: 28px;
+  }
+
+  .plan-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .plan-features li {
+    font-size: 14px;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .plan-features li.active { color: var(--white); }
+
+  .plan-features li::before {
+    content: '—';
+    color: rgba(255,255,255,0.2);
+    font-size: 12px;
+  }
+
+  .plan-features li.active::before {
+    content: '✓';
+    color: var(--orange);
+  }
+
+  .plan-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .plan-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  .plan-btn.outline {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--white);
+  }
+
+  .plan-btn.filled {
+    background: var(--orange);
+    color: white;
+  }
+
+  /* TESTIMONIALS */
+  .testimonials-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .testimonials-header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .testimonial {
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 28px;
+    transition: border-color 0.3s;
+  }
+
+  .testimonial:hover { border-color: rgba(0,175,240,0.2); }
+
+  .testimonial-stars {
+    color: var(--orange);
+    font-size: 14px;
+    margin-bottom: 16px;
+    letter-spacing: 2px;
+  }
+
+  .testimonial-text {
+    color: var(--gray);
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .author-avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .author-name {
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .author-role {
+    font-size: 12px;
+    color: var(--gray);
+  }
+
+  /* FAQ */
+  .faq {
+    background: var(--dark2);
+  }
+
+  .faq-inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .faq-header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .faq-item {
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .faq-item:hover { border-color: rgba(0,175,240,0.2); }
+
+  .faq-question {
+    padding: 20px 24px;
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    background: var(--dark3);
+  }
+
+  .faq-question::after {
+    content: '+';
+    font-size: 22px;
+    color: var(--blue);
+    transition: transform 0.3s;
+  }
+
+  .faq-item.open .faq-question::after {
+    transform: rotate(45deg);
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: var(--dark3);
+  }
+
+  .faq-item.open .faq-answer { max-height: 200px; }
+
+  .faq-answer p {
+    padding: 0 24px 20px;
+    color: var(--gray);
+    font-size: 14px;
+    line-height: 1.7;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    padding-top: 16px;
+  }
+
+  /* FOOTER CTA */
+  .footer-cta {
+    text-align: center;
+    padding: 100px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .footer-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0,175,240,0.08) 0%, transparent 60%);
+  }
+
+  .footer-cta h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .footer-cta p {
+    color: var(--gray);
+    font-size: 18px;
+    margin-bottom: 40px;
+    position: relative;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 40px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--dark2);
+  }
+
+  footer p {
+    color: var(--gray);
+    font-size: 13px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+  }
+
+  .footer-links a {
+    color: var(--gray);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--white); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    section { padding: 70px 24px; }
+    .steps { grid-template-columns: 1fr; }
+    .steps::before { display: none; }
+    .for-grid { grid-template-columns: 1fr; }
+    .plans { grid-template-columns: 1fr; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+    .hero-stats { gap: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#inicio" class="logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="36" height="36">
+      <defs>
+        <linearGradient id="navGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#00AFF0"/>
+          <stop offset="100%" style="stop-color:#FF6C2F"/>
+        </linearGradient>
+        <filter id="navGlow">
+          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+          <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <circle cx="100" cy="90" r="72" fill="#0F1520"/>
+      <circle cx="100" cy="90" r="72" fill="none" stroke="url(#navGrad)" stroke-width="2" opacity="0.6"/>
+      <rect x="68" y="88" width="64" height="48" rx="10" fill="url(#navGrad)" filter="url(#navGlow)"/>
+      <path d="M80 88 L80 68 Q80 50 100 50 Q120 50 120 68 L120 88" fill="none" stroke="url(#navGrad)" stroke-width="9" stroke-linecap="round" filter="url(#navGlow)"/>
+      <circle cx="100" cy="108" r="9" fill="#0F1520"/>
+      <rect x="96" y="108" width="8" height="12" rx="3" fill="#0F1520"/>
+      <circle cx="54" cy="90" r="5" fill="#00AFF0" opacity="0.9"/>
+      <circle cx="40" cy="78" r="4" fill="#00AFF0" opacity="0.6"/>
+      <line x1="59" y1="90" x2="68" y2="90" stroke="#00AFF0" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.7"/>
+      <circle cx="146" cy="90" r="5" fill="#FF6C2F" opacity="0.9"/>
+      <circle cx="160" cy="78" r="4" fill="#FF6C2F" opacity="0.6"/>
+      <line x1="132" y1="90" x2="141" y2="90" stroke="#FF6C2F" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.7"/>
+    </svg>
+    <div class="logo-text">
+      <span>Only</span><span>Conecta</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#como-funciona">Como Funciona</a></li>
+    <li><a href="#para-voce">Para Você</a></li>
+    <li><a href="#planos">Planos</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="onlyconecta-busca.html">Buscar</a></li>
+    <li><a href="onlyconecta-login.html">Entrar</a></li>
+    <li><a href="onlyconecta-cadastro.html" class="nav-cta">Começar Grátis</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-glow-blue"></div>
+  <div class="hero-glow-orange"></div>
+  <div style="position:relative; z-index:1; max-width: 900px; margin: 0 auto;">
+    <div class="hero-badge">A plataforma #1 para o mercado de criadores</div>
+    <h1 class="hero-title">
+      Conectamos<br>
+      <span class="blue">Modelos</span> com<br>
+      <span class="orange">Agências</span>
+    </h1>
+    <p class="hero-sub">
+      Encontre a agência ideal ou descubra as melhores criadoras de conteúdo. Seguro, verificado e feito para o mercado brasileiro.
+    </p>
+    <div class="hero-buttons">
+      <a href="onlyconecta-cadastro.html" class="btn-primary">Sou Modelo — Quero me Cadastrar</a>
+      <a href="onlyconecta-cadastro.html" class="btn-secondary">Sou Agência — Encontrar Modelos</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">Modelos Cadastradas</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">80+</div>
+        <div class="stat-label">Agências Verificadas</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">300+</div>
+        <div class="stat-label">Contratos Fechados</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Seguro e Privado</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="como-funciona">
+  <div class="how-inner">
+    <div class="how-header">
+      <div class="section-label">Simples assim</div>
+      <h2 class="section-title">Como o OnlyConecta funciona</h2>
+      <p class="section-sub" style="margin: 0 auto;">Em apenas 3 passos você já está conectado com quem precisa</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Crie seu Perfil</h3>
+        <p>Cadastre-se gratuitamente. Modelos criam perfil anônimo com métricas. Agências passam por verificação completa antes de aparecer.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Encontre o Match</h3>
+        <p>Filtre por nicho, faturamento, localização e muito mais. Encontre o parceiro ideal com base nos seus objetivos reais.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Feche o Contrato</h3>
+        <p>Negocie pelo chat interno seguro, assine o contrato digital dentro da plataforma e comece a crescer junto.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOR MODELS & AGENCIES -->
+<section id="para-voce">
+  <div class="for-section">
+    <div class="section-label">Para todos</div>
+    <h2 class="section-title">Feito para os dois lados</h2>
+    <p class="section-sub">Uma plataforma que entende as necessidades de quem cria e de quem gerencia</p>
+    <div class="for-grid">
+      <div class="for-card models">
+        <div class="for-icon">💙</div>
+        <h3>Para Modelos</h3>
+        <ul class="for-list">
+          <li class="active">Cadastro 100% gratuito e anônimo</li>
+          <li class="active">Acesse apenas agências verificadas</li>
+          <li class="active">Leia avaliações reais de outras modelos</li>
+          <li class="active">Negocie com segurança pelo chat interno</li>
+          <li class="active">Contratos com proteção jurídica</li>
+          <li class="active">Denuncie agências suspeitas facilmente</li>
+        </ul>
+      </div>
+      <div class="for-card agencies">
+        <div class="for-icon">🧡</div>
+        <h3>Para Agências</h3>
+        <ul class="for-list">
+          <li class="active">Acesso ao maior banco de modelos do Brasil</li>
+          <li class="active">Filtros avançados por nicho e métricas</li>
+          <li class="active">Selo de agência verificada e confiável</li>
+          <li class="active">Dashboard com analytics de performance</li>
+          <li class="active">Envie propostas personalizadas</li>
+          <li class="active">Gerencie múltiplas modelos em um só lugar</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="planos">
+  <div class="pricing-inner">
+    <div class="pricing-header">
+      <div class="section-label">Planos</div>
+      <h2 class="section-title">Invista no seu crescimento</h2>
+      <p class="section-sub" style="margin: 0 auto;">Modelos sempre grátis. Agências escolhem o plano ideal.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <div class="plan-name">Basic</div>
+        <p style="color: var(--gray); font-size: 13px;">Para agências iniciantes</p>
+        <div class="plan-price">R$0<span>/mês</span></div>
+        <p class="plan-period">Para sempre grátis</p>
+        <ul class="plan-features">
+          <li class="active">3 contatos por mês</li>
+          <li class="active">Perfil básico verificado</li>
+          <li class="active">Chat interno</li>
+          <li>Analytics avançado</li>
+          <li>Destaque nas buscas</li>
+          <li>Suporte prioritário</li>
+        </ul>
+        <button class="plan-btn outline" onclick="window.location.href='onlyconecta-pagamento.html?plan=basic'">Começar Grátis</button>
+      </div>
+      <div class="plan featured">
+        <div class="plan-badge">Mais Popular</div>
+        <div class="plan-name">Pro</div>
+        <p style="color: var(--gray); font-size: 13px;">Para agências em crescimento</p>
+        <div class="plan-price">R$99<span>/mês</span></div>
+        <p class="plan-period">Cobrado mensalmente</p>
+        <ul class="plan-features">
+          <li class="active">Contatos ilimitados</li>
+          <li class="active">Perfil destacado nas buscas</li>
+          <li class="active">Chat interno + propostas</li>
+          <li class="active">Analytics completo</li>
+          <li class="active">Destaque nas buscas</li>
+          <li>Suporte prioritário</li>
+        </ul>
+        <button class="plan-btn filled" onclick="window.location.href='onlyconecta-pagamento.html?plan=pro'">Assinar Agora</button>
+      </div>
+      <div class="plan">
+        <div class="plan-name">Enterprise</div>
+        <p style="color: var(--gray); font-size: 13px;">Para grandes agências</p>
+        <div class="plan-price">R$499<span>/mês</span></div>
+        <p class="plan-period">Cobrado mensalmente</p>
+        <ul class="plan-features">
+          <li class="active">Tudo do Pro</li>
+          <li class="active">Múltiplos usuários</li>
+          <li class="active">API de integração</li>
+          <li class="active">Analytics avançado</li>
+          <li class="active">Destaque máximo</li>
+          <li class="active">Suporte prioritário 24/7</li>
+        </ul>
+        <button class="plan-btn outline" onclick="window.location.href='onlyconecta-pagamento.html?plan=enterprise'">Falar com Vendas</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="depoimentos">
+  <div class="testimonials-inner">
+    <div class="testimonials-header">
+      <div class="section-label">Depoimentos</div>
+      <h2 class="section-title">Quem já usa o OnlyConecta</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Finalmente uma plataforma que me deixa segura. Consegui minha agência atual em menos de uma semana e o processo foi totalmente transparente."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar" style="background: rgba(0,175,240,0.15);">👩</div>
+          <div>
+            <div class="author-name">Ana M.</div>
+            <div class="author-role">Criadora de Conteúdo · SP</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Nossa agência cresceu muito depois do OnlyConecta. Os filtros de busca são incríveis e a qualidade das modelos que encontramos é muito maior do que nas redes sociais."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar" style="background: rgba(255,108,47,0.15);">👨</div>
+          <div>
+            <div class="author-name">Rafael K.</div>
+            <div class="author-role">CEO · AgênciaX · RJ</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"O sistema de avaliações me salvou de uma agência problemática. Aqui eu sei exatamente com quem estou lidando antes de qualquer negociação."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar" style="background: rgba(0,175,240,0.15);">👩</div>
+          <div>
+            <div class="author-name">Camila R.</div>
+            <div class="author-role">Criadora de Conteúdo · MG</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="faq-inner">
+    <div class="faq-header">
+      <div class="section-label">Dúvidas</div>
+      <h2 class="section-title">Perguntas frequentes</h2>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">O cadastro de modelos é realmente gratuito?</div>
+      <div class="faq-answer"><p>Sim, 100%. Modelos nunca pagam nada na plataforma. Nosso modelo de negócio é baseado nas assinaturas das agências, não das criadoras de conteúdo.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">Como as agências são verificadas?</div>
+      <div class="faq-answer"><p>Toda agência passa por um processo de verificação que inclui envio de documento, análise de histórico e aprovação manual pela nossa equipe. Agências não verificadas não aparecem para as modelos.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">Minha identidade fica protegida?</div>
+      <div class="faq-answer"><p>Sim. Modelos podem criar perfis completamente anônimos, usando apenas apelido e métricas. Suas informações pessoais só são compartilhadas se você quiser e com quem você escolher.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">O OnlyConecta é só para o Brasil?</div>
+      <div class="faq-answer"><p>Por enquanto focamos no mercado brasileiro, mas em breve expandiremos para outros países da América Latina.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">Posso cancelar minha assinatura quando quiser?</div>
+      <div class="faq-answer"><p>Sim, sem fidelidade. Você cancela quando quiser diretamente pelo painel, sem burocracia e sem taxas de cancelamento.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER CTA -->
+<section class="footer-cta" id="cadastro">
+  <h2>Pronto para <span style="color: var(--blue)">conectar</span> e <span style="color: var(--orange)">crescer</span>?</h2>
+  <p>Junte-se a centenas de modelos e agências que já usam o OnlyConecta</p>
+  <div class="hero-buttons" style="position:relative;">
+    <a href="onlyconecta-cadastro.html" class="btn-primary">Cadastrar como Modelo — Grátis</a>
+    <a href="onlyconecta-cadastro.html" class="btn-secondary">Cadastrar minha Agência</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#inicio" class="logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="30" height="30">
+      <defs>
+        <linearGradient id="footGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#00AFF0"/>
+          <stop offset="100%" style="stop-color:#FF6C2F"/>
+        </linearGradient>
+      </defs>
+      <circle cx="100" cy="90" r="72" fill="#0F1520"/>
+      <circle cx="100" cy="90" r="72" fill="none" stroke="url(#footGrad)" stroke-width="2" opacity="0.6"/>
+      <rect x="68" y="88" width="64" height="48" rx="10" fill="url(#footGrad)"/>
+      <path d="M80 88 L80 68 Q80 50 100 50 Q120 50 120 68 L120 88" fill="none" stroke="url(#footGrad)" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="100" cy="108" r="9" fill="#0F1520"/>
+      <rect x="96" y="108" width="8" height="12" rx="3" fill="#0F1520"/>
+    </svg>
+    <div class="logo-text">
+      <span>Only</span><span>Conecta</span>
+    </div>
+  </a>
+  <p style="color: var(--gray); font-size: 13px;">© 2025 OnlyConecta. Todos os direitos reservados.</p>
+  <div class="footer-links">
+    <a href="onlyconecta-privacidade.html">Privacidade</a>
+    <a href="onlyconecta-termos.html">Termos</a>
+    <a href="onlyconecta-contato.html">Contato</a>
+  </div>
+</footer>
+
+<script>
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.step, .for-card, .plan, .testimonial').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>

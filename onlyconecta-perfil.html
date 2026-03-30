@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OnlyConecta — Perfil</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --blue:#00AFF0; --orange:#FF6C2F; --dark:#080C12; --dark2:#0F1520; --dark3:#162030; --white:#F4F8FF; --gray:#8899AA; --green:#44CC88; --yellow:#FFB800; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--dark); color:var(--white); font-family:'DM Sans',sans-serif; }
+
+  nav { padding:0 32px; height:56px; display:flex; align-items:center; justify-content:space-between; background:var(--dark2); border-bottom:1px solid rgba(255,255,255,0.06); position:sticky; top:0; z-index:50; }
+  .logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+  .logo-text { font-family:'Syne',sans-serif; font-size:18px; font-weight:800; }
+  .logo-text span:first-child { color:var(--blue); }
+  .logo-text span:last-child { color:var(--orange); }
+  .back-link { color:var(--gray); text-decoration:none; font-size:14px; display:flex; align-items:center; gap:6px; transition:color .2s; }
+  .back-link:hover { color:var(--white); }
+
+  /* HERO */
+  .profile-hero {
+    position:relative; padding:48px 0 0; overflow:hidden;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .hero-bg {
+    position:absolute; inset:0;
+    background:linear-gradient(135deg, rgba(0,175,240,0.08) 0%, transparent 60%);
+  }
+  .hero-bg.orange { background:linear-gradient(135deg, rgba(255,108,47,0.08) 0%, transparent 60%); }
+
+  .hero-inner { max-width:900px; margin:0 auto; padding:0 32px 0; position:relative; z-index:1; }
+
+  .profile-top { display:flex; align-items:flex-start; gap:24px; margin-bottom:28px; }
+  .profile-avatar-wrap { position:relative; flex-shrink:0; }
+  .profile-avatar { width:96px; height:96px; border-radius:24px; display:flex; align-items:center; justify-content:center; font-size:44px; border:3px solid rgba(255,255,255,0.1); }
+  .verified-ring { position:absolute; bottom:-4px; right:-4px; width:28px; height:28px; border-radius:50%; background:var(--green); display:flex; align-items:center; justify-content:center; font-size:12px; border:3px solid var(--dark); }
+
+  .profile-info { flex:1; }
+  .profile-name { font-family:'Syne',sans-serif; font-size:32px; font-weight:800; letter-spacing:-1px; margin-bottom:6px; }
+  .profile-meta { display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px; color:var(--gray); font-size:14px; }
+  .meta-item { display:flex; align-items:center; gap:5px; }
+  .profile-badges { display:flex; flex-wrap:wrap; gap:6px; }
+  .badge { display:inline-flex; align-items:center; gap:3px; font-size:11px; font-weight:600; padding:4px 10px; border-radius:100px; }
+  .badge-blue { background:rgba(0,175,240,0.15); color:var(--blue); }
+  .badge-orange { background:rgba(255,108,47,0.15); color:var(--orange); }
+  .badge-green { background:rgba(68,204,136,0.15); color:var(--green); }
+  .badge-gray { background:rgba(136,153,170,0.12); color:var(--gray); }
+
+  .profile-actions { display:flex; flex-direction:column; gap:8px; align-items:flex-end; flex-shrink:0; }
+  .btn-chat { background:linear-gradient(135deg,var(--orange),#CC4400); color:#fff; border:none; border-radius:10px; padding:12px 24px; font-size:14px; font-weight:700; font-family:'DM Sans',sans-serif; cursor:pointer; transition:opacity .2s,transform .2s; box-shadow:0 4px 16px rgba(255,108,47,.3); white-space:nowrap; }
+  .btn-chat:hover { opacity:.88; transform:translateY(-1px); }
+  .btn-save { background:rgba(0,175,240,.1); color:var(--blue); border:1px solid rgba(0,175,240,.25); border-radius:10px; padding:11px 20px; font-size:14px; font-weight:500; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all .2s; white-space:nowrap; }
+  .btn-save:hover { background:rgba(0,175,240,.2); }
+  .btn-report { background:transparent; color:var(--gray); border:none; font-size:12px; cursor:pointer; font-family:'DM Sans',sans-serif; text-decoration:underline; }
+  .btn-report:hover { color:#FF4444; }
+
+  /* STATS BAR */
+  .stats-bar { display:flex; gap:0; border-top:1px solid rgba(255,255,255,0.06); }
+  .stat-item { flex:1; text-align:center; padding:16px; border-right:1px solid rgba(255,255,255,0.06); }
+  .stat-item:last-child { border-right:none; }
+  .stat-val { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; margin-bottom:3px; }
+  .stat-lbl { font-size:11px; color:var(--gray); }
+
+  /* BODY */
+  .profile-body { max-width:900px; margin:0 auto; padding:32px; display:grid; grid-template-columns:1fr 300px; gap:24px; }
+
+  .section-title { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; margin-bottom:14px; }
+  .card { background:var(--dark2); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:22px; margin-bottom:18px; }
+
+  .bio-text { color:var(--gray); font-size:15px; line-height:1.8; }
+
+  .niche-tags { display:flex; flex-wrap:wrap; gap:8px; }
+
+  /* REVIEWS */
+  .review-item { padding:16px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .review-item:last-child { border-bottom:none; }
+  .review-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .reviewer-name { font-size:13px; font-weight:600; }
+  .review-stars { color:var(--yellow); font-size:13px; }
+  .review-date { font-size:11px; color:var(--gray); }
+  .review-text { font-size:13px; color:var(--gray); line-height:1.6; }
+
+  /* SIDEBAR */
+  .info-card { background:var(--dark2); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:20px; margin-bottom:16px; }
+  .info-card h4 { font-family:'Syne',sans-serif; font-size:14px; font-weight:700; margin-bottom:14px; color:var(--gray); text-transform:uppercase; letter-spacing:1px; }
+  .info-row { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:13px; }
+  .info-row:last-child { border-bottom:none; }
+  .info-row span:first-child { color:var(--gray); }
+  .info-row span:last-child { font-weight:500; }
+
+  .rating-big { text-align:center; padding:16px 0; }
+  .rating-number { font-family:'Syne',sans-serif; font-size:48px; font-weight:800; color:var(--yellow); line-height:1; }
+  .rating-stars { font-size:20px; color:var(--yellow); margin:6px 0; }
+  .rating-count { font-size:12px; color:var(--gray); }
+
+  /* REPORT MODAL */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200; align-items:center; justify-content:center; padding:20px; }
+  .modal-overlay.show { display:flex; }
+  .modal { background:var(--dark2); border:1px solid rgba(255,255,255,.08); border-radius:20px; padding:28px; max-width:420px; width:100%; }
+  .modal h3 { font-family:'Syne',sans-serif; font-size:18px; font-weight:800; margin-bottom:8px; }
+  .modal p { color:var(--gray); font-size:14px; margin-bottom:20px; }
+  .modal select, .modal textarea { width:100%; background:var(--dark3); border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:12px 14px; color:var(--white); font-family:'DM Sans',sans-serif; font-size:14px; outline:none; margin-bottom:12px; }
+  .modal textarea { height:100px; resize:none; }
+  .modal-btns { display:flex; gap:10px; justify-content:flex-end; }
+  .modal-btn { padding:10px 20px; border-radius:8px; border:none; font-size:14px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; }
+  .btn-cancel { background:var(--dark3); color:var(--gray); }
+  .btn-report-submit { background:#FF4444; color:#fff; }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:24px; right:24px; background:var(--dark2); border:1px solid rgba(255,255,255,.1); border-left:3px solid var(--green); border-radius:12px; padding:14px 20px; font-size:14px; z-index:300; transform:translateY(80px); opacity:0; transition:all .3s; pointer-events:none; }
+  .toast.show { transform:translateY(0); opacity:1; }
+
+  @media(max-width:768px) { .profile-body{grid-template-columns:1fr;} .profile-top{flex-direction:column;} .profile-actions{flex-direction:row;} nav{padding:0 16px;} }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="onlyconecta.html" class="logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="28" height="28"><defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00AFF0"/><stop offset="100%" style="stop-color:#FF6C2F"/></linearGradient></defs><circle cx="100" cy="90" r="72" fill="#0F1520"/><circle cx="100" cy="90" r="72" fill="none" stroke="url(#lg)" stroke-width="2" opacity="0.6"/><rect x="68" y="88" width="64" height="48" rx="10" fill="url(#lg)"/><path d="M80 88 L80 68 Q80 50 100 50 Q120 50 120 68 L120 88" fill="none" stroke="url(#lg)" stroke-width="9" stroke-linecap="round"/><circle cx="100" cy="108" r="9" fill="#0F1520"/><rect x="96" y="108" width="8" height="12" rx="3" fill="#0F1520"/></svg>
+    <div class="logo-text"><span>Only</span><span>Conecta</span></div>
+  </a>
+  <a href="onlyconecta-busca.html" class="back-link">← Voltar à busca</a>
+</nav>
+
+<!-- HERO -->
+<div class="profile-hero" id="profileHero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-inner">
+    <div class="profile-top">
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar" id="profileAvatar" style="background:rgba(0,175,240,.15)">👩</div>
+        <div class="verified-ring" id="verifiedRing" style="display:none">✓</div>
+      </div>
+      <div class="profile-info">
+        <div class="profile-name" id="profileName">Carregando...</div>
+        <div class="profile-meta" id="profileMeta"></div>
+        <div class="profile-badges" id="profileBadges"></div>
+      </div>
+      <div class="profile-actions">
+        <button class="btn-chat" id="btnChat" onclick="startChat()">💬 Iniciar Chat</button>
+        <button class="btn-save" onclick="saveProfile()">🤍 Salvar Perfil</button>
+        <button class="btn-report" onclick="openReport()">⚠️ Denunciar</button>
+      </div>
+    </div>
+  </div>
+  <div class="stats-bar" id="statsBar"></div>
+</div>
+
+<!-- BODY -->
+<div class="profile-body">
+  <div>
+    <!-- BIO -->
+    <div class="card">
+      <div class="section-title" id="bioTitle">Sobre</div>
+      <p class="bio-text" id="profileBio">Carregando...</p>
+    </div>
+
+    <!-- NICHES -->
+    <div class="card">
+      <div class="section-title">Especialidades</div>
+      <div class="niche-tags" id="profileNiches"></div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="card">
+      <div class="section-title">Avaliações</div>
+      <div id="reviewsList"></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div>
+    <!-- RATING -->
+    <div class="info-card" id="ratingCard">
+      <div class="rating-big">
+        <div class="rating-number" id="ratingNumber">4.8</div>
+        <div class="rating-stars" id="ratingStars">★★★★★</div>
+        <div class="rating-count" id="ratingCount">12 avaliações</div>
+      </div>
+    </div>
+
+    <!-- INFO -->
+    <div class="info-card">
+      <h4>Informações</h4>
+      <div id="infoRows"></div>
+    </div>
+
+    <!-- CTA -->
+    <div style="background:linear-gradient(135deg,rgba(255,108,47,.1),rgba(255,108,47,.03));border:1px solid rgba(255,108,47,.2);border-radius:16px;padding:20px;text-align:center;">
+      <div style="font-size:28px;margin-bottom:10px;" id="ctaIcon">💬</div>
+      <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;margin-bottom:6px;" id="ctaTitle">Interessado?</div>
+      <p style="font-size:13px;color:var(--gray);margin-bottom:14px;" id="ctaDesc">Inicie uma conversa agora mesmo</p>
+      <button class="btn-chat" style="width:100%;" onclick="startChat()" id="ctaBtn">💬 Iniciar Chat</button>
+    </div>
+  </div>
+</div>
+
+<!-- REPORT MODAL -->
+<div class="modal-overlay" id="reportModal">
+  <div class="modal">
+    <h3>⚠️ Denunciar perfil</h3>
+    <p>Sua denúncia será analisada pela nossa equipe em até 48 horas.</p>
+    <select id="reportReason">
+      <option>Selecione o motivo...</option>
+      <option>Perfil falso ou enganoso</option>
+      <option>Tentativa de golpe</option>
+      <option>Assédio ou comportamento inadequado</option>
+      <option>Cobranças indevidas</option>
+      <option>Outro</option>
+    </select>
+    <textarea placeholder="Descreva o que aconteceu com detalhes..."></textarea>
+    <div class="modal-btns">
+      <button class="modal-btn btn-cancel" onclick="closeReport()">Cancelar</button>
+      <button class="modal-btn btn-report-submit" onclick="submitReport()">Enviar Denúncia</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const type   = params.get('type') || 'model';
+  const id     = parseInt(params.get('id')) || 1;
+
+  const models = [
+    { id:1, name:'Luna Silva',    avatar:'👩', bg:'rgba(0,175,240,.15)',   niche:['Fitness','Lifestyle'], location:'São Paulo',    modality:'Home Office', followers:'47k', revenue:'R$5k–10k',  rating:4.8, reviews:12, bio:'Criadora de conteúdo fitness há 3 anos, apaixonada por ajudar pessoas a conquistar seus objetivos. Busco uma agência séria para dar o próximo passo na minha carreira.', verified:false, joined:'Jan 2025', proposals:3 },
+    { id:2, name:'Camila R.',     avatar:'👱‍♀️', bg:'rgba(255,215,0,.15)',   niche:['Moda','Lifestyle'],  location:'Rio de Janeiro',modality:'Híbrido',     followers:'120k',revenue:'R$15k+',    rating:4.9, reviews:28, bio:'Modelo de moda e lifestyle com grande engajamento. Já trabalhei com 2 agências e busco parceria de longo prazo com profissionais sérios.', verified:false, joined:'Fev 2025', proposals:8 },
+    { id:3, name:'Sofia M.',      avatar:'👸', bg:'rgba(68,204,136,.15)',   niche:['Arte','Música'],     location:'Minas Gerais', modality:'Home Office', followers:'22k', revenue:'R$2k–5k',    rating:4.5, reviews:7,  bio:'Artista e musicista independente crescendo no OF há 6 meses. Busco agência que entenda nicho artístico.', verified:false, joined:'Mar 2025', proposals:1 },
+    { id:4, name:'Isabela C.',    avatar:'🌟', bg:'rgba(255,108,47,.15)',   niche:['Gaming'],           location:'São Paulo',    modality:'Home Office', followers:'85k', revenue:'R$8k–15k',   rating:4.7, reviews:19, bio:'Gamer e criadora de conteúdo tech com audiência muito engajada e fiel. Nicho altamente nichado.', verified:false, joined:'Dez 2024', proposals:5 },
+    { id:5, name:'Fernanda L.',   avatar:'💫', bg:'rgba(180,120,255,.15)', niche:['Fitness','Culinária'],location:'São Paulo',   modality:'Presencial',  followers:'31k', revenue:'R$3k–5k',    rating:4.6, reviews:11, bio:'Instrutora de pilates e nutricionista criando conteúdo de saúde e bem-estar há 2 anos.', verified:false, joined:'Nov 2024', proposals:2 },
+    { id:6, name:'Juliana P.',    avatar:'🌸', bg:'rgba(255,100,150,.15)', niche:['Lifestyle'],        location:'Rio de Janeiro',modality:'Híbrido',     followers:'65k', revenue:'R$7k–12k',   rating:4.9, reviews:22, bio:'Lifestyle creator com foco em viagens e bem-estar. Parceria com diversas marcas internacionais.', verified:false, joined:'Out 2024', proposals:6 },
+    { id:7, name:'Aline T.',      avatar:'🦋', bg:'rgba(0,200,200,.15)',   niche:['Moda','Arte'],      location:'Minas Gerais', modality:'Home Office', followers:'18k', revenue:'R$2k–3k',    rating:4.3, reviews:5,  bio:'Fotógrafa e criadora de arte visual. Perfil estético com crescimento consistente.', verified:false, joined:'Fev 2025', proposals:0 },
+    { id:8, name:'Bianca M.',     avatar:'✨', bg:'rgba(255,180,0,.15)',   niche:['Fitness'],          location:'São Paulo',    modality:'Presencial',  followers:'200k',revenue:'R$30k+',     rating:5.0, reviews:47, bio:'Top creator fitness do Brasil. 200k seguidores e faturamento consolidado. Busco agência premium.', verified:false, joined:'Set 2024', proposals:15 },
+  ];
+
+  const agencies = [
+    { id:1, name:'Prime Agency',    avatar:'🏢', bg:'rgba(255,108,47,.15)',  niche:['Fitness','Lifestyle'], location:'São Paulo',    modality:'Home Office', models:8,  plan:'Pro',        rating:4.8, reviews:24, bio:'Especialistas em crescimento orgânico e chatters dedicados. Gerenciamos 8 modelos com resultados comprovados e transparência total.', verified:true,  joined:'Jan 2025', proposals:45 },
+    { id:2, name:'Elite Models BR', avatar:'⭐', bg:'rgba(255,215,0,.15)',   niche:['Moda','Lifestyle'],  location:'Rio de Janeiro',modality:'Híbrido',     models:22, plan:'Enterprise', rating:4.9, reviews:67, bio:'A maior agência do RJ com 22 modelos gerenciadas, equipe de 15 profissionais e histórico de resultados comprovados.', verified:true,  joined:'Out 2024', proposals:120 },
+    { id:3, name:'TopFans Agency',  avatar:'🚀', bg:'rgba(0,175,240,.15)',   niche:['Gaming','Arte'],     location:'São Paulo',    modality:'Home Office', models:5,  plan:'Pro',        rating:4.6, reviews:15, bio:'Agência jovem especializada em nichos específicos. Foco em tráfego pago e estratégia PPV.', verified:true,  joined:'Fev 2025', proposals:28 },
+    { id:4, name:'GrowthOF',        avatar:'📈', bg:'rgba(68,204,136,.15)', niche:['Fitness'],           location:'Minas Gerais', modality:'Presencial',  models:3,  plan:'Basic',      rating:4.2, reviews:8,  bio:'Agência nova com foco em modelos fitness de Minas. Equipe local e suporte presencial diferenciado.', verified:false, joined:'Mar 2025', proposals:12 },
+    { id:5, name:'ContentPro BR',   avatar:'💼', bg:'rgba(180,120,255,.15)',niche:['Lifestyle','Moda'],  location:'São Paulo',    modality:'Híbrido',     models:12, plan:'Pro',        rating:4.7, reviews:31, bio:'Gestão completa com equipe criativa. Produção, edição e distribuição em todas as plataformas.', verified:true,  joined:'Nov 2024', proposals:55 },
+    { id:6, name:'VaultAgency',     avatar:'🔒', bg:'rgba(100,150,255,.15)',niche:['Arte','Música'],     location:'Rio de Janeiro',modality:'Home Office', models:7,  plan:'Pro',        rating:4.5, reviews:19, bio:'Especialistas em criadores artísticos. Contratos transparentes, sem cláusulas abusivas.', verified:true,  joined:'Dez 2024', proposals:33 },
+  ];
+
+  const reviewsData = [
+    { name:'Agência X',  stars:5, date:'Mar 2026', text:'Perfil incrível, comunicação excelente e muito profissional. Fechamos contrato e os resultados foram ótimos.' },
+    { name:'TopAgency',  stars:5, date:'Fev 2026', text:'Uma das melhores criadoras com quem já trabalhamos. Engajamento real e crescimento consistente.' },
+    { name:'GrowthOF',   stars:4, date:'Jan 2026', text:'Ótimo perfil, conteúdo de qualidade. Pequenos ajustes de agenda mas nada que impactou o trabalho.' },
+  ];
+
+  const agencyReviews = [
+    { name:'Luna Silva',  stars:5, date:'Mar 2026', text:'Agência incrível! Profissionalismo total, equipe sempre disponível e resultados reais em 2 meses.' },
+    { name:'Camila R.',   stars:5, date:'Fev 2026', text:'Melhor agência que já trabalhei. Transparência total, contrato justo e muito crescimento.' },
+    { name:'Sofia M.',    stars:4, date:'Jan 2026', text:'Ótima agência. Às vezes a comunicação demora um pouco mas o trabalho é de qualidade.' },
+  ];
+
+  function stars(r) {
+    return '★'.repeat(Math.floor(r)) + (r%1>=.5?'½':'') + '☆'.repeat(5-Math.floor(r)-(r%1>=.5?1:0));
+  }
+
+  function render() {
+    const isModel = type === 'model';
+    const data    = isModel ? models.find(m=>m.id===id)||models[0] : agencies.find(a=>a.id===id)||agencies[0];
+    const accentColor = isModel ? 'var(--blue)' : 'var(--orange)';
+
+    document.title = `${data.name} — OnlyConecta`;
+    document.getElementById('heroBg').className = 'hero-bg' + (isModel ? '' : ' orange');
+
+    // Avatar
+    document.getElementById('profileAvatar').textContent = data.avatar;
+    document.getElementById('profileAvatar').style.background = data.bg;
+    if (data.verified) document.getElementById('verifiedRing').style.display = 'flex';
+
+    // Name + meta
+    document.getElementById('profileName').textContent = data.name;
+    document.getElementById('profileMeta').innerHTML = `
+      <span class="meta-item">📍 ${data.location}</span>
+      <span class="meta-item">🏠 ${data.modality}</span>
+      <span class="meta-item">📅 Membro desde ${data.joined}</span>
+      ${data.verified ? '<span style="color:var(--green);font-weight:600">✓ Verificada</span>' : ''}`;
+
+    // Badges
+    document.getElementById('profileBadges').innerHTML = data.niche.map(n =>
+      `<span class="badge ${isModel?'badge-blue':'badge-orange'}">${n}</span>`
+    ).join('') + (data.verified ? '<span class="badge badge-green">✓ Verificada</span>' : '');
+
+    // Stats bar
+    document.getElementById('statsBar').innerHTML = isModel ? `
+      <div class="stat-item"><div class="stat-val" style="color:var(--blue)">${data.followers}</div><div class="stat-lbl">Seguidores</div></div>
+      <div class="stat-item"><div class="stat-val" style="color:var(--yellow)">${data.rating}</div><div class="stat-lbl">Avaliação</div></div>
+      <div class="stat-item"><div class="stat-val">${data.proposals}</div><div class="stat-lbl">Propostas recebidas</div></div>
+    ` : `
+      <div class="stat-item"><div class="stat-val" style="color:var(--orange)">${data.models}</div><div class="stat-lbl">Modelos gerenciadas</div></div>
+      <div class="stat-item"><div class="stat-val">${data.reviews}</div><div class="stat-lbl">Avaliações</div></div>
+      <div class="stat-item"><div class="stat-val">${data.proposals}</div><div class="stat-lbl">Contatos realizados</div></div>
+    `;
+
+    // Bio
+    document.getElementById('bioTitle').textContent = isModel ? 'Sobre a modelo' : 'Sobre a agência';
+    document.getElementById('profileBio').textContent = data.bio;
+
+    // Niches
+    document.getElementById('profileNiches').innerHTML = data.niche.map(n =>
+      `<span class="badge ${isModel?'badge-blue':'badge-orange'}" style="font-size:13px;padding:7px 14px">${n}</span>`
+    ).join('') + `<span class="badge badge-gray" style="font-size:13px;padding:7px 14px">🏠 ${data.modality}</span>`;
+
+    // Rating — só mostra para modelos
+    document.getElementById('ratingCard').style.display = isModel ? 'block' : 'none';
+    if (isModel) {
+    document.getElementById('ratingNumber').textContent = data.rating;
+    document.getElementById('ratingStars').textContent = '★'.repeat(Math.round(data.rating));
+    document.getElementById('ratingCount').textContent = `${data.reviews} avaliações`;
+    }
+
+    // Info rows
+    document.getElementById('infoRows').innerHTML = isModel ? `
+      <div class="info-row"><span>Localização</span><span>${data.location}</span></div>
+      <div class="info-row"><span>Modalidade</span><span>${data.modality}</span></div>
+      <div class="info-row"><span>Seguidores</span><span style="color:var(--blue)">${data.followers}</span></div>
+      <div class="info-row"><span>Na plataforma</span><span>Desde ${data.joined}</span></div>
+    ` : `
+      <div class="info-row"><span>Localização</span><span>${data.location}</span></div>
+      <div class="info-row"><span>Modalidade</span><span>${data.modality}</span></div>
+      <div class="info-row"><span>Modelos</span><span style="color:var(--orange)">${data.models} ativas</span></div>
+      <div class="info-row"><span>Plano</span><span>${data.plan}</span></div>
+      <div class="info-row"><span>Verificada</span><span style="color:${data.verified?'var(--green)':'var(--gray)'}">${data.verified?'✓ Sim':'Pendente'}</span></div>
+    `;
+
+    // Reviews
+    const rev = isModel ? reviewsData : agencyReviews;
+    document.getElementById('reviewsList').innerHTML = rev.map(r => `
+      <div class="review-item">
+        <div class="review-header">
+          <div>
+            <div class="reviewer-name">${r.name}</div>
+            <div class="review-date">${r.date}</div>
+          </div>
+          <div class="review-stars">${'★'.repeat(r.stars)}</div>
+        </div>
+        <div class="review-text">${r.text}</div>
+      </div>`).join('');
+
+    // CTA
+    document.getElementById('ctaIcon').textContent = isModel ? '💬' : '💬';
+    document.getElementById('ctaTitle').textContent = isModel ? 'Quer trabalhar juntos?' : 'Interessada nesta agência?';
+    document.getElementById('ctaDesc').textContent  = isModel ? 'Inicie uma conversa com esta modelo agora' : 'Entre em contato com a agência diretamente';
+    document.getElementById('btnChat').textContent  = isModel ? '💬 Iniciar Chat' : '💬 Falar com a Agência';
+    document.getElementById('ctaBtn').textContent   = isModel ? '💬 Iniciar Chat' : '💬 Falar com a Agência';
+
+    window._profileData = data;
+  }
+
+  function startChat() {
+    const d = window._profileData;
+    showToast(`Abrindo chat com ${d.name}...`);
+    setTimeout(() => {
+      window.location.href = `onlyconecta-dashboard.html?chat=${encodeURIComponent(d.name)}&type=${type}`;
+    }, 800);
+  }
+
+  function saveProfile() {
+    showToast('Perfil salvo nos seus favoritos! 🤍');
+    document.querySelector('.btn-save').textContent = '❤️ Salvo';
+  }
+
+  function openReport() { document.getElementById('reportModal').classList.add('show'); }
+  function closeReport() { document.getElementById('reportModal').classList.remove('show'); }
+  function submitReport() {
+    closeReport();
+    showToast('Denúncia enviada! Nossa equipe analisará em 48h.');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = '✅ ' + msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  render();
+</script>
+</body>
+</html>
